@@ -1,17 +1,23 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Row, Form, Col, Button } from 'react-bootstrap';
 import { useMst } from '../../../src/models/Root';
-
+import { API_URL } from './../../../src/constants/Config';
 const EditTodo: React.FC = () => {
   const router = useRouter();
+
   const {
-    query: { id, name , complete },
+    query : { id, name , complete }
   } = router;
+
+    let idTodo: string = id.toString();
+    let nameTodo: string = name.toString();
+    let completeTodo: string = complete.toString();
+    
   const { todoList } = useMst();
   const { todoItems } = todoList;
-  const [nameEdit, setNameEdit] = useState<string>(name.toString());
-  const [completeEdit, setCompleteEdit] = useState<string>(complete.toString());
+  const [nameEdit, setNameEdit] = useState<string>(nameTodo);
+  const [completeEdit, setCompleteEdit] = useState<string>(completeTodo);
   const handlerChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNameEdit(e.target.value);
   }; 
@@ -20,13 +26,32 @@ const EditTodo: React.FC = () => {
       
     setCompleteEdit(e.target.value);
   }
-  const sendEditData = (e) =>{
+  const sendEditData = async (e) =>{
       e.preventDefault();
-      let index = Number(id);
-      todoItems[index].changeName(nameEdit);
-      todoItems[index].changeComplete(completeEdit);
-      console.log("edit successfull");
-      router.back();
+      let index : number = todoItems.findIndex(item => item.id === idTodo);
+      let data = {name : nameEdit, complete : completeEdit} 
+      var options = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(data),
+      }
+      try{
+        let res = await fetch(API_URL + 'TodoItems/' + idTodo, options);
+        if(res.status === 200)
+        {
+          todoItems[index].editTodoItem(nameEdit, completeEdit);
+          console.log("edit successfull");
+          router.back();
+        }
+      }
+      catch (error){
+        console.log(error);
+        
+      }
+     
   } 
   return (
     <>

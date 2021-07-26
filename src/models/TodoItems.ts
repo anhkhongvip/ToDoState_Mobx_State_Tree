@@ -1,4 +1,4 @@
-import { types, getParent } from 'mobx-state-tree';
+import { types, getParent, Instance } from 'mobx-state-tree';
 import { TodoListModel } from './Root';
 export const TodoItemsModel = types
 .model('TodoItems', {
@@ -8,16 +8,10 @@ export const TodoItemsModel = types
   })
 .actions(self =>({
 
-  changeName(newName : string)
-  {
+  editTodoItem(newName : string, newComplete : string){
     self.name = newName;
-  },
-
-  changeComplete(newComplete : string)
-  {
     self.complete = newComplete;
   },
-
   remove() {
     getParent<typeof TodoListModel>(self, 2).remove(self);
   }

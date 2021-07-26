@@ -3,22 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev" :"next dev",
+    "server": "nodemon --quiet",
+    "build": "next build && tsc -P server/tsconfig.json",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/json-server": "^0.14.4",
     "boostrap": "^2.0.0",
     "bootstrap": "^5.0.2",
+    "json-server": "^0.16.3",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
     "mobx-react-lite": "^3.2.0",
     "mobx-state-tree": "^5.0.2",
-    "next": "11.0.1",
+    "next": "^11.0.1",
+    "nodemon": "^2.0.12",
     "react": "17.0.2",
     "react-bootstrap": "^2.0.0-beta.4",
     "react-dom": "17.0.2",
+    "ts-node": "^10.1.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

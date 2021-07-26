@@ -1,9 +1,14 @@
-import React, {useState, ChangeEvent} from 'react';
+import React, {FC, useState, ChangeEvent} from 'react';
 import { Container, Form, Row, Col, Button } from 'react-bootstrap';
 import { useMst } from "../../../src/models/Root";
 import { useRouter } from 'next/router'
 import { v4 as uuidv4 } from 'uuid';
-const addTodo = () => {
+import  { API_URL }  from '../../../src/constants/Config'
+import { observer } from 'mobx-react';
+interface addTodoProps { 
+
+}
+const addTodo : FC<addTodoProps> = () => {
   const router = useRouter();
   const [name, setName] = useState<string>();
   const [complete, setComplete] = useState<string>();
@@ -11,15 +16,33 @@ const addTodo = () => {
   const handlerChange = (e : ChangeEvent<HTMLInputElement>) => {
       setName(e.target.value);
   }
-  const addNewTodo = (e) => {
+  const addNewTodo = async (e) => {
     e.preventDefault();
-    console.log('add new successful');
-    todoList.addTodoItem({
-      id : uuidv4(),
-      name,
-      complete
-    })
-    router.back();
+    const todo : TodoItem  = { id : uuidv4(), name , complete }
+    var options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body : JSON.stringify(todo)
+    }
+    try{
+      let res = await fetch(API_URL + 'TodoItems', options)
+      if(res.status === 201)
+      {
+        console.log(todo);
+        todoList.addTodoItem(todo);
+        console.log('add new successful');
+        router.back();
+      }
+     
+    }
+    catch(error)
+    {
+      console.log(error);
+      
+    }
   }
   return (
     <div>
@@ -65,4 +88,4 @@ const addTodo = () => {
   );
 };
 
-export default addTodo;
+export default observer(addTodo);

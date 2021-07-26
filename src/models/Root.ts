@@ -3,11 +3,13 @@ import {
   onSnapshot,
   SnapshotIn,
   destroy,
-  types
+  types,
+  flow,
+  cast
 } from 'mobx-state-tree';
 import { createContext, useContext } from "react";
 import { TodoItemsModel } from './TodoItems' 
-
+import { API_URL } from '../constants/Config';
 
 export const TodoListModel = types
 .model('TodoList', {
@@ -20,6 +22,17 @@ export const TodoListModel = types
     ){
       self.todoItems.push(todoItem)
     },
+    getTodoItems: flow(function * (){
+      try{
+         const response  = yield window.fetch(API_URL + 'TodoItems');
+         const items : TodoItem[]  = yield response.json();
+         self.todoItems.push(...items)
+      }
+      catch (error)
+      {
+        console.log(error);
+      }
+    }),
     remove(item: SnapshotIn<typeof TodoItemsModel>) {
       destroy(item);
     }
@@ -54,4 +67,5 @@ export function useMst() {
   return store;
 }
 
+export type TodoItemsModel = Instance<typeof TodoItemsModel>
 

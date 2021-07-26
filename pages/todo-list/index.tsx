@@ -1,12 +1,21 @@
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Container, Button, Row, Col } from 'react-bootstrap';
 import { useMst } from '../../src/models/Root';
 import { useRouter } from 'next/router';
 import TodoItems from '../../src/components/TodoItems';
 
+let renderTimes = 0;
 const TodoList: React.FC = observer(() => {
   const router = useRouter();
   const { todoList } = useMst();
+  useEffect(() => {
+    if(renderTimes === 0)
+    {
+       todoList.getTodoItems();
+       renderTimes = 1;
+    }
+  }, [])
   return (
     <>
       <Container>
